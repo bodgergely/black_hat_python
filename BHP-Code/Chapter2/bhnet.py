@@ -1,4 +1,4 @@
-#!/opt/local/bin/python2.7
+#!/usr/bin/python2
 
 import sys
 import socket
@@ -39,10 +39,9 @@ def client_handler(client_socket):
         
         # check for upload
         if len(upload_destination):
-                
                 # read in all of the bytes and write to our destination
                 file_buffer = ""
-                
+                print "Waiting for data from client (will be saved to %s)" % upload_destination 
                 # keep reading data until none is available
                 while True:
                         data = client_socket.recv(1024)
@@ -52,6 +51,7 @@ def client_handler(client_socket):
                         else:
                                 file_buffer += data
                                 
+                print "Uploading to: ", upload_destination 
                 # now we take these bytes and try to write them out
                 try:
                         file_descriptor = open(upload_destination,"wb")
@@ -109,6 +109,7 @@ def server_loop():
         
         while True:
                 client_socket, addr = server.accept()
+                print "Client connected: ", addr 
                 
                 # spin off a thread to handle our new client
                 client_thread = threading.Thread(target=client_handler,args=(client_socket,))
@@ -177,8 +178,8 @@ def usage():
         print
         print "Examples: "
         print "bhpnet.py -t 192.168.0.1 -p 5555 -l -c"
-        print "bhpnet.py -t 192.168.0.1 -p 5555 -l -u=c:\\target.exe"
-        print "bhpnet.py -t 192.168.0.1 -p 5555 -l -e=\"cat /etc/passwd\""
+        print "bhpnet.py -t 192.168.0.1 -p 5555 -l -u c:\\target.exe"
+        print "bhpnet.py -t 192.168.0.1 -p 5555 -l -e \"cat /etc/passwd\""
         print "echo 'ABCDEFGHI' | ./bhpnet.py -t 192.168.11.12 -p 135"
         sys.exit(0)
 
